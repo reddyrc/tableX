@@ -1,0 +1,24 @@
+<table id="table">
+	<thead>
+		<tr>
+			<th ng-repeat="header in headers" scope="col">{{header.headerName}}</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr ng-repeat-start="record in records" inject>
+
+		</tr>
+		
+		<tr ng-repeat="history in record.history">
+			<td ng-repeat="header in headers">
+				{{getValue(history, header)}}
+			</td>
+		</tr>
+		
+		<tr ng-repeat-end>
+		  
+		</tr>
+	</tbody>
+</table>
+
+
