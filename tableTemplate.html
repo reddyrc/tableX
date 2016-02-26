@@ -1,24 +1,24 @@
-<table id="table">
-	<thead>
-		<tr>
-			<th ng-repeat="header in headers" scope="col">{{header.headerName}}</th>
-		</tr>
-	</thead>
-	<tbody>
-		<tr ng-repeat-start="record in records" inject>
+<table id="table" class="table">
+    <thead>
+        <tr>
+            <th ng-repeat="header in headers" scope="col">{{header.headerName}}</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat-start="$item in records" inject>
+        </tr>
 
-		</tr>
-		
-		<tr ng-repeat="history in record.history">
-			<td ng-repeat="header in headers">
-				{{getValue(history, header)}}
-			</td>
-		</tr>
-		
-		<tr ng-repeat-end>
-		  
-		</tr>
-	</tbody>
+        <tr ng-repeat="history in $item.history" ng-if="$item.showChildren">
+            <td ng-repeat="header in headers" style="background-color: gray;">
+                <div ng-if="$index == 1" style="padding-left: 20px">
+                    {{getHistoryValue(history, header)}}
+                </div>
+                <div ng-if="$index != 1">
+                    {{getHistoryValue(history, header)}}
+                </div>
+            </td>
+        </tr>
+
+        <tr ng-repeat-end></tr>
+    </tbody>
 </table>
-
-

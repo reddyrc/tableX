@@ -4,107 +4,122 @@ app.controller('controller', ['$scope', function($scope) {
   $scope.values = [];
   var item = {id: 232, age: 12, height: 56, name: 'red', weight: 135};
   item.history = [];
-  item.history.push({id: 231, age: 12, height: 56, name: 'red', weight: 135});
+  item.history.push({id: 2, age: 11, height: 22, name: 'red', weight: 135});
+  item.history.push({id: 1, age: 10, height: 33, name: 'red', weight: 152});
   $scope.values.push(item);
   item = {id:123, age: 12, height: 56, name: 'green', weight: 135};
   item.history = [];
-  item.history.push({id:122, age: 12, height: 56, name: 'green', weight: 135});
+  item.history.push({id:3, age: 12, height: 56, name: 'green', weight: 111});
+  item.history.push({id:2, age: 13, height: 23, name: 'green', weight: 123});
+  item.history.push({id:1, age: 14, height: 65, name: 'green', weight: 135});
   $scope.values.push(item);
-  item = {id: 392, age: 12, height: 56, name: 'green', weight: 135};
+  item = {id: 392, age: 12, height: 56, name: 'green', weight: 231};
   item.history = [];
-  item.history.push({id: 391, age: 12, height: 56, name: 'green', weight: 135});
+  item.history.push({id: 1, age: 54, height: 56, name: 'green', weight: 121});
   $scope.values.push(item);
-  
+  item = {id: 393, age: 12, height: 52, name: 'black', weight: 123};
+  $scope.values.push(item);
+  $scope.edit = function(x) {
+    console.log("id: " + x.id);
+  }
 }]);
 
 
-app.directive('testtable', function() {
-	return {
-		restrict: 'E',
-		transclude: true,
-		templateUrl: 'tableTemplate.html',	
-		replace: false,
-		priority: 0,
-		scope: {
-			records: "=values"
-		},
-    compile: function compile(tElement, tAttrs, tTransclude) {      
-
-      return {
-        pre: function preLink(scope, iElement, iAttrs, crtl, transclude) {
-            console.log("calling pre");
+app.directive('histTable', function() {
+    return {
+        restrict: 'E',
+        transclude: true,
+        templateUrl: 'tableTemplate.html',
+        replace: false,
+        priority: 0,
+        scope: {
+            records: "=values"
         },
-        post: function postLink(scope, iElement, iAttrs, controller) {
-          			console.log($("td"));
-          console.log("calling post");
+    // compile: function compile(tElement, tAttrs, tTransclude) {
+    //
+    //   return {
+    //     pre: function preLink(scope, iElement, iAttrs, crtl, transclude) {
+    //         console.log("calling pre");
+    //     },
+    //     post: function postLink(scope, iElement, iAttrs, controller) {
+    //       console.log("calling post");
+    //     }
+    //   };
+    // },
+        controller: ['$scope', '$element', '$attrs', function($scope, $element, $attrs) {
+            $scope.headers = [];
+      $scope.element = $element;
+            this.addHeader = function(headerName, historyField) {
+              var headerObj = {};
+              headerObj.headerName = headerName;
+              headerObj.historyField = historyField;
+              $scope.headers = jQuery.grep($scope.headers, function(item) {
+                if ( item.headerName != headerName) {
+                  return true;
+                }
+              });
+              $scope.headers.push(headerObj);
+            }
+
+            this.getHeaders = function() {
+                return $scope.headers;
+            }
+      $scope.call = function(functionName, arg) {
+        $element.scope().$eval(functionName)(arg);
+      }
+
+            $scope.getHistoryValue = function(history, header) {
+                return history[header.historyField];
+            }
+      $scope.toggleHistory = function($item) {
+        if ( $item.showChildren == undefined ) {
+          $item.showChildren = true;
+          return;
         }
-      };
-    },
-		controller: ['$scope', function($scope, element, attrs) {
-			$scope.headers = [];
-			
-			this.addHeader = function(headerName, historyField) {
-			  var headerObj = {};
-			  headerObj.headerName = headerName;
-			  headerObj.historyField = historyField;
-			  $scope.headers = jQuery.grep($scope.headers, function(item) {
-			    if ( item.headerName != headerName) {
-			      return true;
-			    }
-			  });
-			$scope.headers.push(headerObj); 
-			}
-			
-			this.getHeaders = function() {
-				return $scope.headers;
-			}
-			
-			$scope.getValue = function(history, header) {
-				console.log(header);
-				return history[header.historyField];
-			}
-			
-		}],
-	}
+        $item.showChildren = !$item.showChildren;
+      }
+      $scope.processKey = function($event, $item) {
+        if ( $event.keyCode == 13 ) {
+          $scope.toggleHistory($item);
+          var id = $event.currentTarget.id;
+          if (id.indexOf("minus") != -1) {
+            id = id.replace(/minus/g, "plus");
+            $("#"+id).focus();
+          }
+          else {
+            id = id.replace(/plus/g, "minus");
+            $("#"+id).focus();
+          }
+          console.log("id: " + id);
+        }
+      }
+        }],
+    }
 });
 
 app.directive('column', function() {
-	return {
-		restrict: 'E', 
-		transclude: true,
-		template: '<td ng-transclude> </td>',
-		replace: true,
-		require: '^^testtable',
-		priority: 10,
-		link: function(scope, element, attrs, tableCtrl) { 
-			tableCtrl.addHeader(attrs.name, attrs.historyfield);
-		} 
-	}
+    return {
+        restrict: 'E',
+        transclude: true,
+        template: '<td ng-transclude> </td>',
+        replace: true,
+        require: '^^histTable',
+        priority: 10,
+        link: function(scope, element, attrs, tableCtrl) {
+            tableCtrl.addHeader(attrs.name, attrs.historyfield);
+        }
+    }
 });
 
-app.directive('displayhistoryrow', function($compile, $templateCache) {
-	return {
-		restrict: 'E', 
-		transclude: false,
-		template: '<div ng-include="\'historyview.html\'"</div>',
-		replace: true,
-		require: '^^testtable',
-		scope: {
-			item: "=history"
-		},
-		priority: -1,
-		link: function(scope, element, attrs, tableCtrl) { 
-			angular.element(document).ready(function() {
-				var historyHtml = "";
-				var headers = tableCtrl.getHeaders();
-				for ( var x = 0; x < headers.length; x++) {
-					historyHtml += "<td>{{item." + headers[0].historyField + "}}</td>";
-				}
-				$templateCache.put('historyview.html', historyHtml);
-				
-			});
-		} 
-	}
+app.directive('historyToggle', function($templateCache) {
+  return {
+    restrict: 'E',
+    require: '^^histTable',
+    template: $templateCache.get("historyToggleColumn.html"),
+    link: function(scope, element, attrs, tableCtrl) {
+      ;
+    }
+  }
 });
 
 app.directive('inject', function(){
