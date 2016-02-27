@@ -163,7 +163,7 @@ app.directive('histTable', function() {
       }
 
       $scope.toggleHistory = function($item, $event) {
-        $scope.toggleHistoryClass($event);
+        //$scope.toggleHistoryClass($event);
         if ($item.showChildren == undefined) {
           $item.showChildren = true;
           return;

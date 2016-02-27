@@ -11,7 +11,14 @@
 <body ng-app="tableDirectiveModule" ng-controller="controller as ctrl">
   <script type="text/ng-template" id="historyToggleColumn.html">
     <div>
-      <span id="toggle-{{$item.id}}" class="glyphicon glyphicon-plus-sign" ng-if="$item.history" tabindex="0" ng-keyup="processKey($event, $item)" ng-click="toggleHistory($item, $event)"></span>
+      <span id="toggle-{{$item.id}}"
+          ng-class="{glyphicon: true,
+                    'glyphicon-plus-sign': !$item.showChildren,
+                    'glyphicon-minus-sign': $item.showChildren}"
+                    ng-if="$item.history" tabindex="0"
+                    ng-keyup="processKey($event, $item)"
+                    ng-click="toggleHistory($item, $event)">
+      </span>
     </div>
   </script>
 
