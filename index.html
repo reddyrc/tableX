@@ -4,41 +4,38 @@
   <head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
     <script data-require="angular.js@1.4.0" data-semver="1.4.0" src="https://code.angularjs.org/1.4.0/angular.js"></script>
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="style.css"/>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
     <script src="script.js"></script>
   </head>
+<body ng-app="tableDirectiveModule" ng-controller="controller as ctrl">
+  <script type="text/ng-template" id="historyToggleColumn.html">
+    <div>
+      <span id="toggle-{{$item.id}}" class="glyphicon glyphicon-plus-sign" ng-if="$item.history" tabindex="0" ng-keyup="processKey($event, $item)" ng-click="toggleHistory($item, $event)"></span>
+    </div>
+  </script>
 
+  <hist-Table values="values">
+    <column headerName="" style="width: 10px">
+      <history-toggle></history-toggle>
+    </column>
+    <column headerName="Age" field="age" historyfield="age" sortable="true">
+      {{$item.age}}
+    </column>
+    <column headerName="Name" field="name" historyfield="name" sortable="true">
+      {{$item.name}}
+    </column>
+    <column headerName="Weight" field="weight" historyfield="weight"  sortable="true">
+      {{$item.weight}}
+    </column>
+    <column headerName="Source Type" field="sourceType" historyfield="sourceType"  sortable="true">
+      {{$item.sourceType}}
+    </column>
+    <column headerName="Actions">
+      <button ng-click="call('edit', $item)">Edit</button>
+    </column>
+  </hist-Table>
 
-
-  <body ng-app="tableDirectiveModule" ng-controller="controller as ctrl">
-    <script type="text/ng-template" id="historyToggleColumn.html">
-        <div id="minus-{{$item.id}}" ng-if="$item.history && $item.showChildren" tabindex="0" ng-keyup="processKey($event, $item)" ng-click="toggleHistory($item)">
-          <span  class="glyphicon glyphicon-minus-sign" Xng-if="$item.history" ></span>
-        </div>
-        <div id="plus-{{$item.id}}" ng-if="$item.history && !$item.showChildren" tabindex="0" ng-keyup="processKey($event, $item)" ng-click="toggleHistory($item)">
-          <span  class="glyphicon glyphicon-plus-sign" Xng-if="$item.history" ></span>
-        </div>
-    </script>
-
-    <hist-Table values="values">
-      <column name="" style="width: 10px">
-        <history-toggle></history-toggle>
-      </column>
-        <column name="Age" historyfield="age">
-            {{$item.age}}
-        </column>
-        <column name="Name" historyfield="name">
-          {{$item.name}}
-        </column>
-        <column name="Weight" historyfield="weight">
-          {{$item.weight}}
-        </column>
-        <column name="Actions">
-          <button ng-click="call('edit', $item)">Edit</button>
-      </column>
-    </hist-Table>
-
-  </body>
+</body>
 
 </html>
