@@ -195,7 +195,7 @@ app.directive('histTable', function() {
         if ($event.keyCode == 13) {
           $timeout(function() {
             $($event.currentTarget).trigger("click");
-            $($event.currentTarget).tabNext();
+            //$($event.currentTarget).tabNext();
           })
         }
       }

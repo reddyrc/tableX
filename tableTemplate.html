@@ -2,8 +2,8 @@
     <thead>
         <tr>
             <th ng-repeat="header in headers" scope="col">
-              <span class="sortable" ng-keyup="processHeaderKeypress($event, header)" title="Click to..." ng-click="doSort(header)" ng-if="!header.sorted && header.sortable" tabindex="0">
-                {{header.headerName}}
+              <span class="sortable" ng-keyup="processHeaderKeypress($event, header)" title="Click to sorty by {{header.headerName}}" ng-click="doSort(header)" ng-if="!header.sorted && header.sortable" tabindex="0">
+                {{header.headerName}}<span ng-class=""></span>
               </span>
               <span ng-if="!header.sortable || header.sorted">
                 {{header.headerName}}
