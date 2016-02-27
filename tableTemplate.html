@@ -2,15 +2,9 @@
     <thead>
         <tr>
             <th ng-repeat="header in headers" scope="col">
-              <span class="sortable" ng-keyup="processHeaderKeypress($event, header)" title="Click to sorty by {{header.headerName}}" ng-click="doSort(header)" ng-if="!header.sorted && header.sortable" tabindex="0">
-                {{header.headerName}}<span ng-class=""></span>
+              <span class="sortable" ng-keyup="processHeaderKeypress($event, header)" title="Click to sorty by {{header.headerName}}" ng-click="doSort(header)" ng-if="header.sortable" tabindex="0">
+                {{header.headerName}}<span ng-class="{glyphicon: header.sorted, 'glyphicon-chevron-up': header.sorted}"></span>
               </span>
-              <span ng-if="!header.sortable || header.sorted">
-                {{header.headerName}}
-                <span ng-if="header.sorted" class="glyphicon glyphicon-chevron-up"/>
-              </span>
-              <span ng-if="false && header.sortable" tabindex="0" ng-click="doSort(header)"
-              class="glyphicon glyphicon-chevron-up"/>
             </th>
         </tr>
     </thead>
