@@ -12,7 +12,7 @@
         <tr ng-repeat-start="$item in records" inject>
         </tr>
 
-        <tr ng-repeat="history in $item.history" ng-if="$item.showChildren">
+        <tr ng-repeat="history in $item.history" ng-if="$item.showChildren && !childTemplate">
             <td ng-repeat="header in headers" style="background-color: gray;">
                 <div ng-if="$index == 1" style="padding-left: 20px">
                     {{getHistoryValue(history, header)}}
@@ -22,7 +22,11 @@
                 </div>
             </td>
         </tr>
-
+        <tr ng-if="$item.showChildren && childTemplate">
+          <td colspan="{{headers.length}}">
+            <div ng-include="childTemplate"/>
+          </td>
+        </tr>
         <tr ng-repeat-end></tr>
     </tbody>
 </table>

@@ -16,14 +16,16 @@ app.controller('controller', ['$scope', function($scope) {
     age: 11,
     height: 22,
     name: 'red',
-    weight: 135
+    weight: 135,
+    sourceType: 'EXTERNAL'
   });
   item.history.push({
     id: 1,
     age: 10,
     height: 33,
     name: 'red',
-    weight: 152
+    weight: 152,
+    sourceType: 'EXTERNAL'
   });
   $scope.values.push(item);
   item = {
@@ -32,7 +34,8 @@ app.controller('controller', ['$scope', function($scope) {
     height: 56,
     name: 'green',
     weight: 135,
-    sourceType: 'EXTERNAL'
+    sourceType: 'EXTERNAL',
+    childTemplate: 'childDetailsView.html'
   };
   item.history = [];
   item.history.push({
@@ -40,21 +43,24 @@ app.controller('controller', ['$scope', function($scope) {
     age: 12,
     height: 56,
     name: 'green',
-    weight: 111
+    weight: 111,
+    sourceType: 'EXTERNAL'
   });
   item.history.push({
     id: 2,
     age: 13,
     height: 23,
     name: 'green',
-    weight: 123
+    weight: 123,
+    sourceType: 'EXTERNAL'
   });
   item.history.push({
     id: 1,
     age: 14,
     height: 65,
     name: 'green',
-    weight: 135
+    weight: 135,
+    sourceType: 'EXTERNAL'
   });
   $scope.values.push(item);
   item = {
@@ -71,7 +77,8 @@ app.controller('controller', ['$scope', function($scope) {
     age: 54,
     height: 56,
     name: 'green',
-    weight: 121
+    weight: 121,
+    sourceType: 'EXTERNAL'
   });
   $scope.values.push(item);
   item = {
@@ -97,7 +104,8 @@ app.directive('histTable', function() {
     replace: false,
     priority: 0,
     scope: {
-      records: "=values"
+      records: "=values",
+      childTemplate: "@childtemplate"
     },
     // compile: function compile(tElement, tAttrs, tTransclude) {
     //
@@ -110,86 +118,94 @@ app.directive('histTable', function() {
     //     }
     //   };
     // },
-    controller: ['$scope', '$element', '$attrs', '$timeout', function(
-      $scope, $element,
-      $attrs, $timeout) {
-      $scope.headers = [];
-      $scope.element = $element;
-      //.name, attrs.field, attrs.historyfield
-      this.addHeader = function(attrs) {
-        var headerObj = {};
-        headerObj.headerName = attrs.headername;
-        headerObj.field = attrs.field;
-        headerObj.historyField = attrs.historyfield;
-        headerObj.sortable = attrs.sortable;
-        headerObj.sortDirection = 1;
-        $scope.headers = jQuery.grep($scope.headers, function(item) {
-          if (item.headerName != attrs.headername) {
-            return true;
+    controller: ['$scope', '$element', '$attrs', '$timeout',
+      '$templateCache',
+      function(
+        $scope, $element,
+        $attrs, $timeout,
+        $templateCache) {
+        $scope.headers = [];
+        $scope.element = $element;
+        //.name, attrs.field, attrs.historyfield
+        this.addHeader = function(attrs) {
+          var headerObj = {};
+          headerObj.headerName = attrs.headername;
+          headerObj.field = attrs.field;
+          headerObj.historyField = attrs.historyfield;
+          headerObj.sortable = attrs.sortable;
+          headerObj.sortDirection = 1;
+          headerObj.childTemplate = attrs.childtemplate;
+          $scope.headers = jQuery.grep($scope.headers, function(item) {
+            if (item.headerName != attrs.headername) {
+              return true;
+            }
+          });
+          $scope.headers.push(headerObj);
+        }
+
+        $scope.resetSortedFields = function() {
+          for (var x = 0; x < $scope.headers.length; x++) {
+            $scope.headers[x].sorted = false;
+            $scope.headers[x].sortDirection = 1;
           }
-        });
-        $scope.headers.push(headerObj);
-      }
-
-      $scope.resetSortedFields = function() {
-        for (var x = 0; x < $scope.headers.length; x++) {
-          $scope.headers[x].sorted = false;
-          $scope.headers[x].sortDirection = 1;
-        }
-      }
-
-      $scope.doSort = function(headerObj) {
-        if (!headerObj.sortable) {
-          return;
-        }
-        if (headerObj.sorted) {
-          headerObj.sortDirection = headerObj.sortDirection * -1;
-        } else {
-          $scope.resetSortedFields();
-          headerObj.sorted = true;
         }
 
-        $scope.records = $scope.records.sort(function(a, b) {
-          if (a[headerObj.field] < b[headerObj.field]) {
-            return -1 * headerObj.sortDirection;
+        $scope.doSort = function(headerObj) {
+          if (!headerObj.sortable) {
+            return;
           }
-          if (a[headerObj.field] > b[headerObj.field]) {
-            return 1 * headerObj.sortDirection;
+          if (headerObj.sorted) {
+            headerObj.sortDirection = headerObj.sortDirection * -1;
+          } else {
+            $scope.resetSortedFields();
+            headerObj.sorted = true;
           }
-          return 0;
-        });
-      }
 
-      $scope.call = function(functionName, arg) {
-        $element.scope().$eval(functionName)(arg);
-      }
-
-      $scope.getHistoryValue = function(history, header) {
-        return history[header.historyField];
-      }
-
-      $scope.toggleHistory = function($item, $event) {
-        //$scope.toggleHistoryClass($event);
-        if ($item.showChildren == undefined) {
-          $item.showChildren = true;
-          return;
+          $scope.records = $scope.records.sort(function(a, b) {
+            if (a[headerObj.field] < b[headerObj.field]) {
+              return -1 * headerObj.sortDirection;
+            }
+            if (a[headerObj.field] > b[headerObj.field]) {
+              return 1 * headerObj.sortDirection;
+            }
+            return 0;
+          });
         }
-        $item.showChildren = !$item.showChildren;
-      }
 
-      $scope.processKey = function($event, $item) {
-        if ($event.keyCode == 13) {
-          $scope.toggleHistory($item, $event);
+        $scope.call = function(functionName, arg) {
+          $element.scope().$eval(functionName)(arg);
+        }
+
+        $scope.getHistoryValue = function(history, header) {
+          return history[header.historyField];
+        }
+
+        $scope.toggleHistory = function($item, $event) {
+          //$scope.toggleHistoryClass($event);
+          if ($item.showChildren == undefined) {
+            $item.showChildren = true;
+            return;
+          }
+          $item.showChildren = !$item.showChildren;
+        }
+
+        $scope.processKey = function($event, $item) {
+          if ($event.keyCode == 13) {
+            $scope.toggleHistory($item, $event);
+          }
+        }
+        $scope.processHeaderKeypress = function($event, headerObj) {
+          if ($event.keyCode == 13) {
+            $timeout(function() {
+              $($event.currentTarget).trigger("click");
+            })
+          }
+        }
+        $scope.includeChildTemplate = function(headerObj) {
+
         }
       }
-      $scope.processHeaderKeypress = function($event, headerObj) {
-        if ($event.keyCode == 13) {
-          $timeout(function() {
-            $($event.currentTarget).trigger("click");
-          })
-        }
-      }
-    }],
+    ],
   }
 });
 
