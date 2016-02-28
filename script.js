@@ -122,6 +122,7 @@ app.directive('histTable', function() {
         headerObj.field = attrs.field;
         headerObj.historyField = attrs.historyfield;
         headerObj.sortable = attrs.sortable;
+        headerObj.sortDirection = 1;
         $scope.headers = jQuery.grep($scope.headers, function(item) {
           if (item.headerName != attrs.headername) {
             return true;
@@ -133,6 +134,7 @@ app.directive('histTable', function() {
       $scope.resetSortedFields = function() {
         for (var x = 0; x < $scope.headers.length; x++) {
           $scope.headers[x].sorted = false;
+          $scope.headers[x].sortDirection = 1;
         }
       }
 
@@ -140,15 +142,19 @@ app.directive('histTable', function() {
         if (!headerObj.sortable) {
           return;
         }
-        $scope.resetSortedFields();
-        headerObj.sorted = true;
+        if (headerObj.sorted) {
+          headerObj.sortDirection = headerObj.sortDirection * -1;
+        } else {
+          $scope.resetSortedFields();
+          headerObj.sorted = true;
+        }
 
         $scope.records = $scope.records.sort(function(a, b) {
           if (a[headerObj.field] < b[headerObj.field]) {
-            return -1;
+            return -1 * headerObj.sortDirection;
           }
           if (a[headerObj.field] > b[headerObj.field]) {
-            return 1;
+            return 1 * headerObj.sortDirection;
           }
           return 0;
         });
@@ -171,21 +177,6 @@ app.directive('histTable', function() {
         $item.showChildren = !$item.showChildren;
       }
 
-      $scope.toggleHistoryClass = function($event) {
-        var className = $event.currentTarget.className;
-        if (className.indexOf("minus") != -1) {
-          $("#" + $event.currentTarget.id).toggleClass(
-            "glyphicon glyphicon-minus-sign", false);
-          $("#" + $event.currentTarget.id).toggleClass(
-            "glyphicon glyphicon-plus-sign", true);
-        } else {
-          $("#" + $event.currentTarget.id).toggleClass(
-            "glyphicon glyphicon-plus-sign", false);
-          $("#" + $event.currentTarget.id).toggleClass(
-            "glyphicon glyphicon-minus-sign", true);
-        }
-      }
-
       $scope.processKey = function($event, $item) {
         if ($event.keyCode == 13) {
           $scope.toggleHistory($item, $event);
@@ -195,7 +186,6 @@ app.directive('histTable', function() {
         if ($event.keyCode == 13) {
           $timeout(function() {
             $($event.currentTarget).trigger("click");
-            //$($event.currentTarget).tabNext();
           })
         }
       }

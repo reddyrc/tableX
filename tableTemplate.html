@@ -3,7 +3,7 @@
         <tr>
             <th ng-repeat="header in headers" scope="col">
               <span class="sortable" ng-keyup="processHeaderKeypress($event, header)" title="Click to sorty by {{header.headerName}}" ng-click="doSort(header)" ng-if="header.sortable" tabindex="0">
-                {{header.headerName}}<span ng-class="{glyphicon: header.sorted, 'glyphicon-chevron-up': header.sorted}"></span>
+                {{header.headerName}}<span ng-class="{glyphicon: header.sorted, 'glyphicon-chevron-up': header.sorted && header.sortDirection == 1, 'glyphicon-chevron-down': header.sorted && header.sortDirection == -1}"></span>
               </span>
             </th>
         </tr>
