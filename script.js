@@ -17,7 +17,8 @@ app.controller('controller', ['$scope', function($scope) {
     height: 22,
     name: 'red',
     weight: 135,
-    sourceType: 'EXTERNAL'
+    sourceType: 'EXTERNAL',
+    revNbr: 2
   });
   item.history.push({
     id: 1,
@@ -25,7 +26,8 @@ app.controller('controller', ['$scope', function($scope) {
     height: 33,
     name: 'red',
     weight: 152,
-    sourceType: 'EXTERNAL'
+    sourceType: 'EXTERNAL',
+    revNbr: 1
   });
   $scope.values.push(item);
   item = {
@@ -44,7 +46,8 @@ app.controller('controller', ['$scope', function($scope) {
     height: 56,
     name: 'green',
     weight: 111,
-    sourceType: 'EXTERNAL'
+    sourceType: 'EXTERNAL',
+    revNbr: 3
   });
   item.history.push({
     id: 2,
@@ -52,7 +55,8 @@ app.controller('controller', ['$scope', function($scope) {
     height: 23,
     name: 'green',
     weight: 123,
-    sourceType: 'EXTERNAL'
+    sourceType: 'EXTERNAL',
+    revNbr: 2
   });
   item.history.push({
     id: 1,
@@ -60,7 +64,8 @@ app.controller('controller', ['$scope', function($scope) {
     height: 65,
     name: 'green',
     weight: 135,
-    sourceType: 'EXTERNAL'
+    sourceType: 'EXTERNAL',
+    revNbr: 1
   });
   $scope.values.push(item);
   item = {
@@ -78,7 +83,8 @@ app.controller('controller', ['$scope', function($scope) {
     height: 56,
     name: 'green',
     weight: 121,
-    sourceType: 'EXTERNAL'
+    sourceType: 'EXTERNAL',
+    revNbr: 1
   });
   $scope.values.push(item);
   item = {
@@ -93,6 +99,9 @@ app.controller('controller', ['$scope', function($scope) {
   $scope.edit = function(x) {
     console.log("id: " + x.id);
   }
+  $scope.rowClicked = function($item) {
+    console.log("clicked: " + $item.id);
+  }
 }]);
 
 
@@ -105,7 +114,8 @@ app.directive('histTable', function() {
     priority: 0,
     scope: {
       records: "=values",
-      childTemplate: "@childtemplate"
+      childTemplate: "@childtemplate",
+      id: "@"
     },
     // compile: function compile(tElement, tAttrs, tTransclude) {
     //
@@ -135,6 +145,12 @@ app.directive('histTable', function() {
           headerObj.sortable = attrs.sortable;
           headerObj.sortDirection = 1;
           headerObj.childTemplate = attrs.childtemplate;
+          if (attrs.historytogglerow) {
+            headerObj.historyToggleRow = true;
+          } else {
+            headerObj.historyToggleRow = false;
+          }
+
           $scope.headers = jQuery.grep($scope.headers, function(item) {
             if (item.headerName != attrs.headername) {
               return true;

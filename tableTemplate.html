@@ -1,8 +1,8 @@
 <table id="table" class="table">
     <thead>
         <tr>
-            <th ng-repeat="header in headers" scope="col">
-              <span class="sortable" ng-keyup="processHeaderKeypress($event, header)" title="Click to sorty by {{header.headerName}}" ng-click="doSort(header)" ng-if="header.sortable" tabindex="0">
+            <th ng-repeat="header in headers" scope="col" id="{{id}}_thead_{{header.field}}">
+              <span ng-class="{sortable: header.sortable}" ng-keyup="processHeaderKeypress($event, header)" title="Click to sorty by {{header.headerName}}" ng-click="doSort(header)" tabindex="0">
                 {{header.headerName}}<span ng-class="{glyphicon: header.sorted, 'glyphicon-chevron-up': header.sorted && header.sortDirection == 1, 'glyphicon-chevron-down': header.sorted && header.sortDirection == -1}"></span>
               </span>
             </th>
@@ -12,8 +12,11 @@
         <tr ng-repeat-start="$item in records" inject>
         </tr>
 
-        <tr ng-repeat="history in $item.history" ng-if="$item.showChildren && !childTemplate">
-            <td ng-repeat="header in headers" style="background-color: gray;">
+        <tr ng-repeat="history in $item.history" ng-if="$item.showChildren && !childTemplate" ng-click="call('rowClicked', history)">
+            <td scope="row" style="padding-left: 20px">
+                {{history.revNbr}}
+            </td>
+            <td ng-repeat="header in headers" style="background-color: gray;" headers="{{id}}_thead_{{header.field}}" ng-if="!header.historyToggleRow">
                 <div ng-if="$index == 1" style="padding-left: 20px">
                     {{getHistoryValue(history, header)}}
                 </div>

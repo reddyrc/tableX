@@ -29,15 +29,18 @@
   </script>
 
 
-  <hist-Table values="values" xchildtemplate="childDetailsView.html">
-    <column headerName="" style="width: 10px">
+  <hist-Table values="values" xchildtemplate="childDetailsView.html" id="bioTable">
+    <column headerName="" field="toggleHist" style="width: 10px" historytogglerow="true">
       <history-toggle></history-toggle>
+    </column>
+    <column headerName="Name" field="name" historyfield="name" sortable="true">
+      {{$item.name}}
     </column>
     <column headerName="Age" field="age" historyfield="age" sortable="true">
       {{$item.age}}
     </column>
-    <column headerName="Name" field="name" historyfield="name" sortable="true">
-      {{$item.name}}
+    <column headerName="Height" field="height" historyfield="height" xsortable="true">
+      {{$item.height}}
     </column>
     <column headerName="Weight" field="weight" historyfield="weight"  sortable="true">
       {{$item.weight}}
